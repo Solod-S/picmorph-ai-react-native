@@ -1,9 +1,12 @@
 import { Stack } from "expo-router";
 import { ClerkLoaded, ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
+import { UserDetailContext } from "../context/UserDetailContext";
+import { useState } from "react";
 // import * as SecureStore from "expo-secure-store";
 
 export default function RootLayout() {
+  const [userDetail, setUserDetail] = useState();
   const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
   // const tokenCache = {
@@ -27,15 +30,17 @@ export default function RootLayout() {
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
       <ClerkLoaded>
-        <Stack
-        // screenOptions={{
-        //   headerShown: false,
-        // }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="auth/login" options={{ headerShown: false }} />
-        </Stack>
+        <UserDetailContext.Provider value={{ userDetail, setUserDetail }}>
+          <Stack
+          // screenOptions={{
+          //   headerShown: false,
+          // }}
+          >
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+          </Stack>
+        </UserDetailContext.Provider>
       </ClerkLoaded>
     </ClerkProvider>
   );
