@@ -13,10 +13,10 @@ const GetUserInfo = email =>
 const CreateNewUser = data => axiosClient.post("/user-lists", { data: data });
 
 const GetFeaturedCategoryList = () =>
-  axiosClient.get("/ai-models?filters[isFeatured]][$eq]=true&populate=*");
+  axiosClient.get("/ai-modals?filters[isFeatured]][$eq]=true&populate=*");
 
 const GetAiModels = type =>
-  axiosClient.get("/ai-models?filters[" + type + "][$eq]=true&populate=*");
+  axiosClient.get("/ai-modals?filters[" + type + "][$eq]=true&populate=*");
 
 const AIGenerateImage = data =>
   axios.post("http://192.168.123.67:8081/aimodel", data);

@@ -12,8 +12,6 @@ export default function NotificationLayout() {
   const { userDetail, setUserDetail } = useContext(UserDetailContext);
   useEffect(() => {
     user && VerifyUser();
-
-    return () => {};
   }, [user]);
 
   const VerifyUser = async () => {
