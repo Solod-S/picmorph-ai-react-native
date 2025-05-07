@@ -33,7 +33,26 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "This app accesses your photos to let you choose images for editing."
+        }
       ]
+      // ,
+      // [
+      //   "expo-camera",
+      //   {
+      //     "cameraPermission": "This app accesses your camera to let you take pictures."
+      //   }
+      // ],
+      // [
+      //   "expo-location",
+      //   {
+      //     "locationPermission": "This app accesses your location to provide location-based features."
+      //   }
+      // ]
     ],
     "experiments": {
       "typedRoutes": true

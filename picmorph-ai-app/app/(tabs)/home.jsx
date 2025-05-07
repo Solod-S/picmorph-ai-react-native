@@ -1,20 +1,30 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { Header, Banner, AiFeaturedModel } from "../../components";
+import { Header, Banner, AiFeaturedModel, AiModels } from "../../components";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
   return (
     <SafeAreaView
-      style={{ flex: 1, padding: 20, marginTop: 20 }}
+      style={{
+        flex: 1,
+        paddingHorizontal: 16,
+        marginTop: 20,
+        paddingBottom: 10,
+      }}
       edges={["top"]}
     >
-      {/* Header */}
-      <Header />
-      {/* Banner */}
-      <Banner />
-
-      <AiFeaturedModel />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <Header />
+        {/* Banner */}
+        <Banner />
+        {/* Ai Featured Model */}
+        <AiFeaturedModel />
+        {/* AI Models */}
+        <AiModels type={"avatar"} />
+        <AiModels type={"style"} />
+      </ScrollView>
     </SafeAreaView>
   );
 };
