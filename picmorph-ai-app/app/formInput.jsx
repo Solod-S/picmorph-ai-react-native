@@ -7,6 +7,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import GlobalApi from "../services/GlobalApi";
 
 const FormInputScreen = () => {
   const navigation = useNavigation();
@@ -15,7 +16,7 @@ const FormInputScreen = () => {
   const [userInput, setUserInput] = useState();
   const [userImage, setUserImage] = useState();
   const [aiModel, setAiModel] = useState();
-
+  const [generatedImage, setGeneratedImage] = useState();
   useEffect(() => {
     // console.log("params", params);
     navigation.setOptions({
@@ -32,8 +33,16 @@ const FormInputScreen = () => {
   const onGenerate = async () => {
     try {
       setLoading(true);
-      console.log(`userInput`, userInput);
-      console.log(`userImage`, userImage);
+
+      const data = {
+        aiModelName: aiModel?.aiModalName,
+        inputPrompt: userInput,
+        defaultPrompt: aiModel?.defaultPrompt,
+        userImage: userImage,
+      };
+      const result = await GlobalApi.AIGenerateImage(data);
+      console.log(`result`, result.data);
+      result?.data?.length > 0 && setGeneratedImage(result.data[0]);
     } catch (error) {
       console.log("Error generating image:", error);
     } finally {

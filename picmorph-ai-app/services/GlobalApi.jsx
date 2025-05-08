@@ -19,7 +19,7 @@ const GetAiModels = type =>
   axiosClient.get("/ai-modals?filters[" + type + "][$eq]=true&populate=*");
 
 const AIGenerateImage = data =>
-  axios.post("http://192.168.123.67:8081/aimodel", data);
+  axios.post("http://192.168.0.157:8081/aimodel", data);
 
 const UpdateUserCredits = (documentId, data) =>
   axiosClient.put("/user-lists/" + documentId, { data });

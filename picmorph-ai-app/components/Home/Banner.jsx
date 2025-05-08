@@ -1,5 +1,6 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
+import Replicate from "replicate";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -18,8 +19,22 @@ export const Banner = () => {
       <View style={styles.overlay} />
 
       <View style={styles.textContainer}>
-        <Text style={styles.whiteText}>From Words</Text>
-        <Text style={styles.redText}>to Wonders</Text>
+        <Text
+          textShadowColor={"rgba(0, 0, 0, 0.75)"}
+          textShadowOffset={{ width: 1, height: 1 }}
+          textShadowRadius={5}
+          style={styles.whiteText}
+        >
+          From Words
+        </Text>
+        <Text
+          textShadowColor={"rgba(0, 0, 0, 0.75)"}
+          textShadowOffset={{ width: 1, height: 1 }}
+          textShadowRadius={5}
+          style={styles.redText}
+        >
+          to Wonders
+        </Text>
       </View>
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Explore</Text>
@@ -54,17 +69,17 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     color: Colors.WHITE,
-    textShadowColor: "rgba(0, 0, 0, 0.75)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 5,
+    // textShadowColor: "rgba(0, 0, 0, 0.75)",
+    // textShadowOffset: { width: 1, height: 1 },
+    // textShadowRadius: 5,
   },
   redText: {
     fontSize: 30,
     fontWeight: "bold",
     color: Colors.PRIMARY,
-    textShadowColor: "rgba(0, 0, 0, 0.75)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 5,
+    // textShadowColor: "rgba(0, 0, 0, 0.75)",
+    // textShadowOffset: { width: 1, height: 1 },
+    // textShadowRadius: 5,
   },
   button: {
     position: "absolute",
