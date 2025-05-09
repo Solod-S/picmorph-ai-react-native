@@ -369,6 +369,36 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAiGeneratedImageAiGeneratedImage
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'ai_generated_images';
+  info: {
+    displayName: 'AiGeneratedImage';
+    pluralName: 'ai-generated-images';
+    singularName: 'ai-generated-image';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    imageUrl: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::ai-generated-image.ai-generated-image'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    userEmail: Schema.Attribute.String;
+  };
+}
+
 export interface ApiAiModalAiModal extends Struct.CollectionTypeSchema {
   collectionName: 'ai_modals';
   info: {
@@ -945,6 +975,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::ai-generated-image.ai-generated-image': ApiAiGeneratedImageAiGeneratedImage;
       'api::ai-modal.ai-modal': ApiAiModalAiModal;
       'api::user-list.user-list': ApiUserListUserList;
       'plugin::content-releases.release': PluginContentReleasesRelease;

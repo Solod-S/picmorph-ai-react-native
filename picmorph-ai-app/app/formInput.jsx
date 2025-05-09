@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import React, { useContext, useEffect, useState } from "react";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import Colors from "../constant/Colors";
 import { ImageUploadComponent, TextInputComponent } from "../components";
 import {
@@ -8,8 +8,11 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import GlobalApi from "../services/GlobalApi";
+import { UserDetailContext } from "../context/UserDetailContext";
 
 const FormInputScreen = () => {
+  const router = useRouter();
+  const { userDetail, setUserDetail } = useContext(UserDetailContext);
   const navigation = useNavigation();
   const params = useLocalSearchParams();
   const [loading, setLoading] = useState(false);
@@ -17,6 +20,7 @@ const FormInputScreen = () => {
   const [userImage, setUserImage] = useState();
   const [aiModel, setAiModel] = useState();
   const [generatedImage, setGeneratedImage] = useState();
+
   useEffect(() => {
     // console.log("params", params);
     navigation.setOptions({
@@ -40,9 +44,30 @@ const FormInputScreen = () => {
         defaultPrompt: aiModel?.defaultPrompt,
         userImage: userImage,
       };
+
       const result = await GlobalApi.AIGenerateImage(data);
-      console.log(`result`, result.data);
-      result?.data?.length > 0 && setGeneratedImage(result.data[0]);
+      const aiImage = result?.data[0];
+      console.log(`aiImage`, aiImage);
+
+      if (aiImage) {
+        setGeneratedImage(result.data[0]);
+        const updatedResult = await GlobalApi.UpdateUserCredits(
+          userDetail?.documentId,
+          { credits: Number(userDetail?.credits) - 1 }
+        );
+        updatedResult?.data?.data && setUserDetail(updatedResult?.data?.data);
+        const saveImageDate = {
+          userEmail: userDetail?.userEmail,
+          imageUrl: aiImage,
+        };
+        const SaveImageResult = await GlobalApi.AddAiImageRecord(saveImageDate);
+
+        router.push({
+          pathname: "viewAiImage",
+          params: { imageUrl: aiImage, prompt: userInput },
+        });
+        // console.log(`SaveImageResult`, SaveImageResult?.data?.data);
+      }
     } catch (error) {
       console.log("Error generating image:", error);
     } finally {

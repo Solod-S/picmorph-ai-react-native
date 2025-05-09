@@ -3,6 +3,7 @@ import { ClerkLoaded, ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { UserDetailContext } from "../context/UserDetailContext";
 import { useState } from "react";
+import Toast from "react-native-toast-message";
 // import * as SecureStore from "expo-secure-store";
 
 export default function RootLayout() {
@@ -41,6 +42,7 @@ export default function RootLayout() {
             <Stack.Screen name="auth/login" options={{ headerShown: false }} />
             <Stack.Screen name="formInput" options={{ headerShown: false }} />
           </Stack>
+          <Toast />
         </UserDetailContext.Provider>
       </ClerkLoaded>
     </ClerkProvider>

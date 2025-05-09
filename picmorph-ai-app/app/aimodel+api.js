@@ -50,26 +50,3 @@ export async function POST(request) {
     return Response.json({ error: error.message }, { status: 500 });
   }
 }
-
-// const replicate = new Replicate({
-//   auth: process.env.EXPO_PUBLIC_REPLICATE_API_KEY,
-// });
-
-// export async function POST(request) {
-//   try {
-//     const data = await request.json();
-
-//     const output = await replicate.run(data?.aiModelName, {
-//       input: {
-//         prompt: data?.inputPrompt + " " + data?.defaultPrompt,
-//       },
-//     });
-
-//     console.log("output", output); // должен быть массив с URL
-
-//     return Response.json({ result: output[0] }); // output[0] — ссылка на изображение
-//   } catch (error) {
-//     console.error("Error in POST request:", error);
-//     return Response.json({ result: null, error: String(error) });
-//   }
-// }

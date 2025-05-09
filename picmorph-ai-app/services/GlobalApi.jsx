@@ -22,7 +22,7 @@ const AIGenerateImage = data =>
   axios.post("http://192.168.0.157:8081/aimodel", data);
 
 const UpdateUserCredits = (documentId, data) =>
-  axiosClient.put("/user-lists/" + documentId, { data });
+  axiosClient.put("/user-lists/" + documentId, { data: data });
 
 const AddAiImageRecord = data =>
   axiosClient.post("/ai-generated-images", { data: data });
