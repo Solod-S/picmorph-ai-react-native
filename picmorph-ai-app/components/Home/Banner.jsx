@@ -6,8 +6,10 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import Colors from "../../constant/Colors";
+import { useRouter } from "expo-router";
 
 export const Banner = () => {
+  const router = useRouter();
   return (
     <View style={styles.container}>
       <Image
@@ -36,7 +38,19 @@ export const Banner = () => {
           to Wonders
         </Text>
       </View>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        // onPress={() =>
+        //   router.push({
+        //     pathname: "viewAiImage",
+        //     params: {
+        //       imageUrl:
+        //         "https://lh4.googleusercontent.com/proxy/GAgvUA-34TMILHxRmIRxSqElWy72i8lArBXmw26g9TQtRkU_rh6cvk387TZ-o0U_Atys_ireTJS9gt0VG4RI62Xcs8XZ_bMu_-18bm3rVsorbajpKu_2VkIRhZ7moGdQ4otg",
+        //       prompt: "test",
+        //     },
+        //   })
+        // }
+        style={styles.button}
+      >
         <Text style={styles.buttonText}>Explore</Text>
       </TouchableOpacity>
     </View>

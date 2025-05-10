@@ -4,14 +4,20 @@ import {
   Image,
   TouchableOpacity,
   ToastAndroid,
+  Linking,
 } from "react-native";
 import React from "react";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect } from "react";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import Toast from "react-native-toast-message";
+import Colors from "../constant/Colors";
 
 export default function ViewAiImage() {
   const navigation = useNavigation();
@@ -19,8 +25,11 @@ export default function ViewAiImage() {
   const [status, requestPermission] = MediaLibrary.usePermissions();
   useEffect(() => {
     navigation.setOptions({
+      headerTitle: "Image View",
       headerShown: true,
-      headerTitle: "View Ai generated Image",
+      headerBackTitleVisible: false,
+      headerBackTitle: "back",
+      headerTintColor: "black",
     });
   }, []);
 
@@ -81,30 +90,42 @@ export default function ViewAiImage() {
 
   const downloadImage = async () => {
     try {
-      if (!status?.granted) {
-        const permissionResp = await requestPermission();
-        if (!permissionResp?.granted) {
-          // ToastAndroid.show("No Permssion to download", ToastAndroid.SHORT);
-          Toast.show({
-            type: "error",
-            position: "top",
-            text2: "No Permssion to download",
-            visibilityTime: 2000,
-            autoHide: true,
-            topOffset: 50,
-          });
-          return;
-        }
+      let permission = status;
+
+      // const { status, canAskAgain } = await MediaLibrary.requestPermissionsAsync();
+      // console.log("permission!", { status, canAskAgain });
+
+      // if (!permission || !permission.granted) {
+      //   permission = await requestPermission();
+      // }
+
+      // if (status === "denied" && !canAskAgain) {
+      //   Linking.openSettings(); // Открывает настройки приложения
+      // }
+      // ⚠️ Expo Go не работает с пермишенами WRITE/READ, только через eas build
+
+      if (!permission || !permission.granted) {
+        permission = await requestPermission();
+      }
+
+      if (!permission.granted) {
+        Toast.show({
+          type: "error",
+          position: "top",
+          text2: "No permission to download",
+          visibilityTime: 2000,
+          autoHide: true,
+          topOffset: 50,
+        });
+        return;
       }
 
       const fileUri =
         FileSystem.documentDirectory + Date.now() + "_IngenAI.jpg";
       const { uri } = await FileSystem.downloadAsync(params?.imageUrl, fileUri);
 
-      //save to gallery
       const asset = await MediaLibrary.createAssetAsync(uri);
       if (asset) {
-        // ToastAndroid.show("Image Downloaded", ToastAndroid.SHORT);
         Toast.show({
           type: "success",
           position: "top",
@@ -114,11 +135,10 @@ export default function ViewAiImage() {
           topOffset: 50,
         });
       } else {
-        // ToastAndroid.show("Error", ToastAndroid.SHORT);
         Toast.show({
           type: "error",
           position: "top",
-          text2: "Error",
+          text2: "Error saving image",
           visibilityTime: 2000,
           autoHide: true,
           topOffset: 50,
@@ -126,7 +146,6 @@ export default function ViewAiImage() {
       }
     } catch (e) {
       console.error("Error downloading image:", e);
-      // ToastAndroid.show("Error downloading image", ToastAndroid.SHORT);
       Toast.show({
         type: "error",
         position: "top",
@@ -137,16 +156,75 @@ export default function ViewAiImage() {
       });
     }
   };
+
+  // const downloadImage = async () => {
+  //   try {
+  //     if (!status?.granted) {
+  //       const permissionResp = await requestPermission();
+  //       if (!permissionResp?.granted) {
+  //         // ToastAndroid.show("No Permssion to download", ToastAndroid.SHORT);
+  //         Toast.show({
+  //           type: "error",
+  //           position: "top",
+  //           text2: "No Permssion to download",
+  //           visibilityTime: 2000,
+  //           autoHide: true,
+  //           topOffset: 50,
+  //         });
+  //         return;
+  //       }
+  //     }
+
+  //     const fileUri =
+  //       FileSystem.documentDirectory + Date.now() + "_IngenAI.jpg";
+  //     const { uri } = await FileSystem.downloadAsync(params?.imageUrl, fileUri);
+
+  //     //save to gallery
+  //     const asset = await MediaLibrary.createAssetAsync(uri);
+  //     if (asset) {
+  //       // ToastAndroid.show("Image Downloaded", ToastAndroid.SHORT);
+  //       Toast.show({
+  //         type: "success",
+  //         position: "top",
+  //         text2: "Image Downloaded",
+  //         visibilityTime: 2000,
+  //         autoHide: true,
+  //         topOffset: 50,
+  //       });
+  //     } else {
+  //       // ToastAndroid.show("Error", ToastAndroid.SHORT);
+  //       Toast.show({
+  //         type: "error",
+  //         position: "top",
+  //         text2: "Error",
+  //         visibilityTime: 2000,
+  //         autoHide: true,
+  //         topOffset: 50,
+  //       });
+  //     }
+  //   } catch (e) {
+  //     console.error("Error downloading image:", e);
+  //     // ToastAndroid.show("Error downloading image", ToastAndroid.SHORT);
+  //     Toast.show({
+  //       type: "error",
+  //       position: "top",
+  //       text2: "Error downloading image",
+  //       visibilityTime: 2000,
+  //       autoHide: true,
+  //       topOffset: 50,
+  //     });
+  //   }
+  // };
   return (
-    <View style={{ padding: 20 }}>
+    <View style={{ padding: 20, backgroundColor: Colors.WHITE, flex: 1 }}>
       <Image
         source={{ uri: params?.imageUrl }}
         style={{ width: "100%", height: 400, borderRadius: 20 }}
       />
       <Text
         style={{
-          marginVertical: 10,
-          fontSize: 22,
+          marginTop: 10,
+          fontSize: hp(2.5),
           color: "black",
           fontWeight: "800",
         }}
@@ -157,8 +235,8 @@ export default function ViewAiImage() {
       <Text
         style={{
           marginVertical: 20,
-          fontSize: 16,
-          color: "grey",
+          fontSize: hp(1.8),
+          color: Colors.RED,
         }}
       >
         Note Image available for next 30 minutes{" "}
@@ -174,7 +252,7 @@ export default function ViewAiImage() {
         <TouchableOpacity
           style={{
             padding: 15,
-            backgroundColor: "black",
+            backgroundColor: Colors.PRIMARY,
             borderRadius: 10,
             alignItems: "center",
             width: "50%",
@@ -183,7 +261,7 @@ export default function ViewAiImage() {
         >
           <Text
             style={{
-              fontSize: 18,
+              fontSize: hp(2),
               fontWeight: "bold",
               color: "white",
             }}
@@ -195,7 +273,9 @@ export default function ViewAiImage() {
           onPress={ShareImage}
           style={{
             padding: 15,
-            backgroundColor: "black",
+            // backgroundColor: "black",
+            borderWidth: 2,
+            borderColor: Colors.PRIMARY,
             borderRadius: 10,
             alignItems: "center",
             width: "50%",
@@ -203,9 +283,9 @@ export default function ViewAiImage() {
         >
           <Text
             style={{
-              fontSize: 18,
+              fontSize: hp(2),
               fontWeight: "bold",
-              color: "aqua",
+              color: Colors.PRIMARY,
             }}
           >
             share

@@ -22,14 +22,19 @@ export async function POST(request) {
   }
   try {
     // Create a prediction request
+
+    const input = {
+      prompt: data?.inputPrompt + " " + data?.defaultPrompt,
+      main_face_image: data?.userImageUrl,
+      image: data?.userImageUrl,
+      scale: 2,
+    };
+
+    if (data?.userImageUrl) input.num_samples = 1;
+
     const prediction = await replicate.predictions.create({
       version: data?.aiModelName,
-      input: {
-        prompt: data?.inputPrompt + " " + data?.defaultPrompt,
-        main_face_image: data?.userImageUrl,
-        image: data?.userImageUrl,
-        // num_samples: 1,
-      },
+      input,
     });
 
     // Fetch the full response by polling the prediction URL

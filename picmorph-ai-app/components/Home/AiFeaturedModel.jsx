@@ -86,7 +86,11 @@ export const AiFeaturedModel = () => {
       <FlatList
         scrollEnabled={false}
         style={{ marginTop: 10 }}
-        data={isLoading ? [1, 2, 3, 4] : aiModelList}
+        data={
+          isLoading
+            ? [1, 2, 3, 4]
+            : aiModelList.filter(item => item.name !== "Upscale Image")
+        }
         numColumns={4}
         keyExtractor={(item, index) => index.toString()}
         columnWrapperStyle={{ justifyContent: "space-between" }}
