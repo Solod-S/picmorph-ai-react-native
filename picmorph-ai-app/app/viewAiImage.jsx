@@ -90,38 +90,30 @@ export default function ViewAiImage() {
 
   const downloadImage = async () => {
     try {
+      // https://docs.expo.dev/versions/latest/sdk/media-library/
       let permission = status;
 
-      // const { status, canAskAgain } = await MediaLibrary.requestPermissionsAsync();
-      // console.log("permission!", { status, canAskAgain });
-
-      // if (!permission || !permission.granted) {
-      //   permission = await requestPermission();
-      // }
-
-      // if (status === "denied" && !canAskAgain) {
-      //   Linking.openSettings(); // Открывает настройки приложения
-      // }
       // ⚠️ Expo Go не работает с пермишенами WRITE/READ, только через eas build
 
-      if (!permission || !permission.granted) {
+      if (!permission || !permission?.granted) {
+        console.log("Permission not granted");
         permission = await requestPermission();
-      }
 
-      if (!permission.granted) {
-        Toast.show({
-          type: "error",
-          position: "top",
-          text2: "No permission to download",
-          visibilityTime: 2000,
-          autoHide: true,
-          topOffset: 50,
-        });
-        return;
+        if (!permission.granted) {
+          Toast.show({
+            type: "error",
+            position: "top",
+            text2: "No permission to download",
+            visibilityTime: 2000,
+            autoHide: true,
+            topOffset: 50,
+          });
+          return;
+        }
       }
 
       const fileUri =
-        FileSystem.documentDirectory + Date.now() + "_IngenAI.jpg";
+        FileSystem.documentDirectory + Date.now() + "_PicMorphAI.jpg";
       const { uri } = await FileSystem.downloadAsync(params?.imageUrl, fileUri);
 
       const asset = await MediaLibrary.createAssetAsync(uri);
@@ -257,7 +249,7 @@ export default function ViewAiImage() {
             alignItems: "center",
             width: "50%",
           }}
-          onPress={downloadImage}
+          onPress={() => downloadImage()}
         >
           <Text
             style={{

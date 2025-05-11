@@ -77,54 +77,55 @@ export const AiModels = ({ type }) => {
       >
         {type?.toUpperCase()}
       </Text>
-
-      <FlatList
-        style={{ marginTop: 10 }}
-        data={isLoading ? [1, 2, 3, 4] : aiModelList}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item, index }) =>
-          isLoading ? (
-            renderSkeleton()[index]
-          ) : (
-            <TouchableOpacity
-              onPress={() => OnClickAiModel(item)}
-              style={{
-                marginRight: 20,
-                borderRadius: 15,
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.2,
-                shadowRadius: 3.84,
-                elevation: 5,
-              }}
-            >
-              <Image
-                resizeMode="cover"
-                source={{ uri: item?.icon?.url }}
+      <View style={{ alignItems: "center", marginTop: 10 }}>
+        <FlatList
+          style={{ marginTop: 10 }}
+          data={isLoading ? [1, 2, 3, 4] : aiModelList}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={({ item, index }) =>
+            isLoading ? (
+              renderSkeleton()[index]
+            ) : (
+              <TouchableOpacity
+                onPress={() => OnClickAiModel(item)}
                 style={{
-                  width: 140,
-                  height: 180,
+                  marginRight: 20,
                   borderRadius: 15,
-                }}
-              />
-              <Text
-                style={{
-                  position: "absolute",
-                  bottom: 10,
-                  color: "white",
-                  fontWeight: "bold",
-                  width: "100%",
-                  textAlign: "center",
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 3.84,
+                  elevation: 5,
                 }}
               >
-                {item?.name}
-              </Text>
-            </TouchableOpacity>
-          )
-        }
-      />
+                <Image
+                  resizeMode="cover"
+                  source={{ uri: item?.icon?.url }}
+                  style={{
+                    width: 140,
+                    height: 180,
+                    borderRadius: 15,
+                  }}
+                />
+                <Text
+                  style={{
+                    position: "absolute",
+                    bottom: 10,
+                    color: "white",
+                    fontWeight: "bold",
+                    width: "100%",
+                    textAlign: "center",
+                  }}
+                >
+                  {item?.name}
+                </Text>
+              </TouchableOpacity>
+            )
+          }
+        />
+      </View>
     </View>
   );
 };

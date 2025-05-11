@@ -48,6 +48,14 @@
         {
           "photosPermission": "This app accesses your photos to let you choose images for editing."
         }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow PicMorph AI to access your photos.",
+          "savePhotosPermission": "Allow PicMorph AI to save photos.",
+          "isAccessMediaLocationEnabled": true
+        }
       ]
       // ,
       // [

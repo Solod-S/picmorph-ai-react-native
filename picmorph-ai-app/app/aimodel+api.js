@@ -27,7 +27,7 @@ export async function POST(request) {
       prompt: data?.inputPrompt + " " + data?.defaultPrompt,
       main_face_image: data?.userImageUrl,
       image: data?.userImageUrl,
-      scale: 2,
+      // scale: 2,
     };
 
     if (data?.userImageUrl) input.num_samples = 1;

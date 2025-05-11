@@ -9,9 +9,11 @@ import {
 } from "react-native-responsive-screen";
 import GlobalApi from "../services/GlobalApi";
 import { UserDetailContext } from "../context/UserDetailContext";
-import { Cloudinary } from "@cloudinary/url-gen";
 import { upload } from "cloudinary-react-native";
 import Toast from "react-native-toast-message";
+import * as FileSystem from "expo-file-system";
+import * as ImageManipulator from "expo-image-manipulator";
+import { cld, deleteCloudinaryImage, options } from "../services/Cloudinary";
 
 const FormInputScreen = () => {
   const router = useRouter();
@@ -22,7 +24,6 @@ const FormInputScreen = () => {
   const [userInput, setUserInput] = useState();
   const [userImage, setUserImage] = useState();
   const [aiModel, setAiModel] = useState();
-  const [generatedImage, setGeneratedImage] = useState();
 
   useEffect(() => {
     // console.log("params", params);
@@ -61,6 +62,107 @@ const FormInputScreen = () => {
     }
   };
 
+  const updateUserCredits = async () => {
+    try {
+      const updatedResult = await GlobalApi.UpdateUserCredits(
+        userDetail?.documentId,
+        { credits: Number(userDetail?.credits) - 1 }
+      );
+      updatedResult?.data?.data && setUserDetail(updatedResult?.data?.data);
+    } catch (error) {
+      console.log("Error updating user credits:", error);
+    }
+  };
+
+  const uploadImageAndSave = async aiImageUrl => {
+    try {
+      // Шаг 1: Скачиваем изображение во временный файл
+      const fileUri = `${FileSystem.cacheDirectory}temp-ai-image.jpg`;
+      const downloadResult = await FileSystem.downloadAsync(
+        aiImageUrl,
+        fileUri
+      );
+
+      if (!downloadResult || !downloadResult.uri) {
+        throw new Error("Failed to download image from URL");
+      }
+
+      // Шаг 2: Сжимаем изображение
+      const compressedImageResult = await ImageManipulator.manipulateAsync(
+        downloadResult.uri,
+        [],
+        {
+          compress: 0.4,
+          format: ImageManipulator.SaveFormat.JPEG,
+          base64: false,
+        }
+      );
+
+      // Шаг 3: Загружаем в Cloudinary
+      await upload(cld, {
+        file: compressedImageResult?.uri,
+        options: options,
+        callback: async (error, response) => {
+          if (error) {
+            console.log("Cloudinary upload error:", error);
+            return;
+          }
+          console.log("Uploaded URL:", response?.url);
+
+          // Шаг 4: Сохраняем ссылку в БД
+          const saveImageDate = {
+            userEmail: userDetail?.userEmail,
+            imageUrl: response?.url,
+          };
+
+          await GlobalApi.AddAiImageRecord(saveImageDate);
+          router.replace({
+            pathname: "viewAiImage",
+            params: {
+              imageUrl: response?.url,
+              prompt: aiModel?.name,
+            },
+          });
+        },
+      });
+    } catch (error) {
+      console.log("Error uploading image:", error);
+    }
+  };
+
+  // const uploadImageAndSave = async aiImage => {
+  //   try {
+  //     // Upload image to Cloudinary
+
+  //     await upload(cld, {
+  //       file: aiImage,
+  //       options: options,
+  //       callback: async (error, response) => {
+  //         //.. handle response
+  //         const publicId = response?.public_id;
+  //         console.log(response?.url); //user image in cloudinary
+
+  //         // Save generated image Url to DB
+  //         const saveImageDate = {
+  //           userEmail: userDetail?.userEmail,
+  //           imageUrl: response?.url,
+  //         };
+
+  //         await GlobalApi.AddAiImageRecord(saveImageDate);
+  //         router.replace({
+  //           pathname: "viewAiImage",
+  //           params: {
+  //             imageUrl: aiImage,
+  //             prompt: aiModel?.name,
+  //           },
+  //         });
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.log("Error uploading image:", error);
+  //   }
+  // };
+
   const textToImage = async data => {
     try {
       setLoading(true);
@@ -68,28 +170,19 @@ const FormInputScreen = () => {
       const data = {
         aiModelName: aiModel?.aiModalName,
         inputPrompt: userInput,
-        defaultPrompt: aiModel?.defaultPrompt,
+        defaultPrompt: aiModel?.defaultPrompt || "",
         userImage: userImage,
       };
-
+      console.log(`aiImage`, data);
       const result = await GlobalApi.AIGenerateImage(data);
-
+      console.log(`aiImage`, data);
       const aiImage =
         typeof result?.data === "object" ? result?.data[0] : result.data;
       console.log(`aiImage`, aiImage);
 
       if (aiImage) {
-        setGeneratedImage(aiImage);
-        const updatedResult = await GlobalApi.UpdateUserCredits(
-          userDetail?.documentId,
-          { credits: Number(userDetail?.credits) - 1 }
-        );
-        updatedResult?.data?.data && setUserDetail(updatedResult?.data?.data);
-        const saveImageDate = {
-          userEmail: userDetail?.userEmail,
-          imageUrl: aiImage,
-        };
-        const SaveImageResult = await GlobalApi.AddAiImageRecord(saveImageDate);
+        await uploadImageAndSave(aiImage);
+        await updateUserCredits();
 
         router.replace({
           pathname: "viewAiImage",
@@ -116,28 +209,24 @@ const FormInputScreen = () => {
   const imageToAIImage = async () => {
     try {
       setLoading(true);
-
-      const cld = new Cloudinary({
-        cloud: {
-          cloudName: process.env.EXPO_PUBLIC_CLOUD_NAME,
-          apiKey: process.env.EXPO_PUBLIC_CLOUDINARY_API_KEY,
-        },
-        url: {
-          secure: true,
-        },
-      });
-
-      const options = {
-        upload_preset: process.env.EXPO_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
-        unsigned: true,
-      };
+      const compressedImageResult = await ImageManipulator.manipulateAsync(
+        userImage,
+        [], // без действий: [] если только сжатие
+        {
+          compress: 0.4,
+          format: ImageManipulator.SaveFormat.JPEG,
+          base64: false,
+        }
+      );
 
       await upload(cld, {
-        file: userImage,
+        file: compressedImageResult?.uri,
         options: options,
         callback: async (error, response) => {
           //.. handle response
-          console.log(response?.url); //user image in cloudinary
+          const publicId = response?.public_id;
+          console.log(response?.url, " ", publicId); //user image in cloudinary + id
+
           const data = {
             inputPrompt: aiModel?.defaultPrompt,
             userImageUrl: response?.url,
@@ -146,25 +235,15 @@ const FormInputScreen = () => {
           };
 
           const result = await GlobalApi.AIGenerateImage(data);
+          await deleteCloudinaryImage(publicId); // delete image from cloudinary
           const aiImage =
-            typeof result?.data === "object" ? result?.data[0] : result.data;
+            typeof result?.data === "object" ? result?.data[0] : result?.data;
           console.log(`aiImage`, aiImage);
 
           if (aiImage) {
-            setGeneratedImage(aiImage);
-            const updatedResult = await GlobalApi.UpdateUserCredits(
-              userDetail?.documentId,
-              { credits: Number(userDetail?.credits) - 1 }
-            );
-            updatedResult?.data?.data &&
-              setUserDetail(updatedResult?.data?.data);
-            const saveImageDate = {
-              userEmail: userDetail?.userEmail,
-              imageUrl: aiImage,
-            };
-            const SaveImageResult = await GlobalApi.AddAiImageRecord(
-              saveImageDate
-            );
+            await uploadImageAndSave(aiImage);
+            await updateUserCredits();
+
             router.replace({
               pathname: "viewAiImage",
               params: {
@@ -184,14 +263,6 @@ const FormInputScreen = () => {
               topOffset: 50,
             });
           }
-
-          // const saveImageData = {
-          //   imageUrl: response?.url,
-          //   userEmail: userDetail?.userEmail,
-          // };
-          // const SaveImageResult = await GlobalApi.AddAiImageRecord(
-          //   saveImageData
-          // );
         },
       });
     } catch (error) {
