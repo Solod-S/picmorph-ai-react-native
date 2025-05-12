@@ -1,6 +1,12 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { FlatList, ScrollView, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { Header, Banner, AiFeaturedModel, AiModels } from "../../components";
+import {
+  Header,
+  Banner,
+  AiFeaturedModel,
+  AiModels,
+  AllUsersCreation,
+} from "../../components";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
@@ -14,17 +20,25 @@ const HomeScreen = () => {
       }}
       edges={["top"]}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <Header />
-        {/* Banner */}
-        <Banner />
-        {/* Ai Featured Model */}
-        <AiFeaturedModel />
-        {/* AI Models */}
-        <AiModels type={"avatar"} />
-        <AiModels type={"style"} />
-      </ScrollView>
+      <FlatList
+        nestedScrollEnabled={true}
+        // style={{ padding: 20 }}
+        data={[1]}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View>
+            <Header />
+            <Banner />
+            <AiFeaturedModel />
+            <AiModels type={"avatar"} />
+            <AiModels type={"style"} />
+
+            {/* Users Creation */}
+            <AllUsersCreation />
+            <View style={{ height: 100 }}></View>
+          </View>
+        )}
+      />
     </SafeAreaView>
   );
 };
