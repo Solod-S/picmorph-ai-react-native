@@ -97,7 +97,7 @@ const FormInputScreen = () => {
           base64: false,
         }
       );
-
+      console.log("Compressed image result:", compressedImageResult);
       // Шаг 3: Загружаем в Cloudinary
       await upload(cld, {
         file: compressedImageResult?.uri,
@@ -114,6 +114,7 @@ const FormInputScreen = () => {
             userEmail: userDetail?.userEmail,
             imageUrl: response?.url,
           };
+          console.log(`saveImageDate`, saveImageDate);
 
           await GlobalApi.AddAiImageRecord(saveImageDate);
           router.replace({
@@ -129,39 +130,6 @@ const FormInputScreen = () => {
       console.log("Error uploading image:", error);
     }
   };
-
-  // const uploadImageAndSave = async aiImage => {
-  //   try {
-  //     // Upload image to Cloudinary
-
-  //     await upload(cld, {
-  //       file: aiImage,
-  //       options: options,
-  //       callback: async (error, response) => {
-  //         //.. handle response
-  //         const publicId = response?.public_id;
-  //         console.log(response?.url); //user image in cloudinary
-
-  //         // Save generated image Url to DB
-  //         const saveImageDate = {
-  //           userEmail: userDetail?.userEmail,
-  //           imageUrl: response?.url,
-  //         };
-
-  //         await GlobalApi.AddAiImageRecord(saveImageDate);
-  //         router.replace({
-  //           pathname: "viewAiImage",
-  //           params: {
-  //             imageUrl: aiImage,
-  //             prompt: aiModel?.name,
-  //           },
-  //         });
-  //       },
-  //     });
-  //   } catch (error) {
-  //     console.log("Error uploading image:", error);
-  //   }
-  // };
 
   const textToImage = async data => {
     try {

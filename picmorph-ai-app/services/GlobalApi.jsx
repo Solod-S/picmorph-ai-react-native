@@ -27,13 +27,26 @@ const UpdateUserCredits = (documentId, data) =>
 const AddAiImageRecord = data =>
   axiosClient.post("/ai-generated-images", { data: data });
 
-const GetAllAiImages = pageSize =>
-  axiosClient.get(
-    "/ai-generated-images?pagination[start]=" +
+// const GetAllAiImages = pageSize => {
+//   if (pageSize >= 20) return null;
+//   return axiosClient.get(
+//     "/ai-generated-images?pagination[start]=" +
+//       (pageSize - 5) +
+//       "&pagination[limit]=" +
+//       pageSize
+//   );
+// };
+
+const GetAllAiImages = pageSize => {
+  if (pageSize >= 20) return null;
+  return axiosClient.get(
+    "/ai-generated-images?" +
+      "pagination[start]=" +
       (pageSize - 5) +
-      "&pagination[limit]=" +
-      pageSize
+      "&pagination[limit]=5" +
+      "&sort=createdAt:desc"
   );
+};
 
 const GetAllUserImages = userEmail =>
   axiosClient.get("/ai-generated-images?filters[userEmail][$eq]=" + userEmail);

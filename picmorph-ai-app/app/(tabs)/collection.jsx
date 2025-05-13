@@ -9,6 +9,12 @@ import {
 } from "react-native";
 import GlobalApi from "../../services/GlobalApi";
 import { UserDetailContext } from "./../../context/UserDetailContext";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import Colors from "../../constant/Colors";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Collection() {
   const [loading, setLoading] = useState(false);
@@ -36,13 +42,25 @@ export default function Collection() {
   }, [userDetail]);
 
   return (
-    <View
+    <SafeAreaView
       style={{
-        alignItems: "center",
+        backgroundColor: Colors.WHITE,
+        flex: 1,
+        paddingHorizontal: 16,
+        paddingTop: 20,
+        paddingBottom: 10,
       }}
+      edges={["top"]}
     >
-      <Text style={{ margin: 20, fontSize: 20, fontWeight: "bold" }}>
-        Your Generated Images
+      <Text
+        style={{
+          fontSize: hp(3.3),
+          fontWeight: "bold",
+          color: Colors.PRIMARY,
+          opacity: 0.7,
+        }}
+      >
+        YOUR IMAGES
       </Text>
       <FlatList
         showsVerticalScrollIndicator={false}
@@ -63,6 +81,6 @@ export default function Collection() {
           </TouchableOpacity>
         )}
       />
-    </View>
+    </SafeAreaView>
   );
 }

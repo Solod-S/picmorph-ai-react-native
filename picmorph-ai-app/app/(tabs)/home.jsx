@@ -8,14 +8,16 @@ import {
   AllUsersCreation,
 } from "../../components";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Colors from "../../constant/Colors";
 
 const HomeScreen = () => {
   return (
     <SafeAreaView
       style={{
+        backgroundColor: Colors.WHITE,
         flex: 1,
         paddingHorizontal: 16,
-        marginTop: 20,
+        paddingTop: 20,
         paddingBottom: 10,
       }}
       edges={["top"]}
@@ -35,7 +37,7 @@ const HomeScreen = () => {
 
             {/* Users Creation */}
             <AllUsersCreation />
-            <View style={{ height: 100 }}></View>
+            <View style={{ height: 50 }}></View>
           </View>
         )}
       />

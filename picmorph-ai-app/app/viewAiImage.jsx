@@ -149,64 +149,6 @@ export default function ViewAiImage() {
     }
   };
 
-  // const downloadImage = async () => {
-  //   try {
-  //     if (!status?.granted) {
-  //       const permissionResp = await requestPermission();
-  //       if (!permissionResp?.granted) {
-  //         // ToastAndroid.show("No Permssion to download", ToastAndroid.SHORT);
-  //         Toast.show({
-  //           type: "error",
-  //           position: "top",
-  //           text2: "No Permssion to download",
-  //           visibilityTime: 2000,
-  //           autoHide: true,
-  //           topOffset: 50,
-  //         });
-  //         return;
-  //       }
-  //     }
-
-  //     const fileUri =
-  //       FileSystem.documentDirectory + Date.now() + "_IngenAI.jpg";
-  //     const { uri } = await FileSystem.downloadAsync(params?.imageUrl, fileUri);
-
-  //     //save to gallery
-  //     const asset = await MediaLibrary.createAssetAsync(uri);
-  //     if (asset) {
-  //       // ToastAndroid.show("Image Downloaded", ToastAndroid.SHORT);
-  //       Toast.show({
-  //         type: "success",
-  //         position: "top",
-  //         text2: "Image Downloaded",
-  //         visibilityTime: 2000,
-  //         autoHide: true,
-  //         topOffset: 50,
-  //       });
-  //     } else {
-  //       // ToastAndroid.show("Error", ToastAndroid.SHORT);
-  //       Toast.show({
-  //         type: "error",
-  //         position: "top",
-  //         text2: "Error",
-  //         visibilityTime: 2000,
-  //         autoHide: true,
-  //         topOffset: 50,
-  //       });
-  //     }
-  //   } catch (e) {
-  //     console.error("Error downloading image:", e);
-  //     // ToastAndroid.show("Error downloading image", ToastAndroid.SHORT);
-  //     Toast.show({
-  //       type: "error",
-  //       position: "top",
-  //       text2: "Error downloading image",
-  //       visibilityTime: 2000,
-  //       autoHide: true,
-  //       topOffset: 50,
-  //     });
-  //   }
-  // };
   return (
     <View style={{ padding: 20, backgroundColor: Colors.WHITE, flex: 1 }}>
       <Image
