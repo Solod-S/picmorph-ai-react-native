@@ -6,8 +6,10 @@ import Colors from "../../constant/Colors";
 import GlobalApi from "../../services/GlobalApi";
 import { useUser } from "@clerk/clerk-expo";
 import { UserDetailContext } from "./../../context/UserDetailContext";
+import { UsePreventBack } from "../../hooks";
 
-export default function NotificationLayout() {
+export default function TabsLayout() {
+  UsePreventBack();
   const { user } = useUser();
   const { userDetail, setUserDetail } = useContext(UserDetailContext);
   useEffect(() => {

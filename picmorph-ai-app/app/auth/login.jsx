@@ -9,6 +9,7 @@ import {
 import React, { useCallback, useEffect } from "react";
 import * as WebBrowser from "expo-web-browser";
 import * as AuthSession from "expo-auth-session";
+import { useOAuth } from "@clerk/clerk-expo";
 import { useSSO } from "@clerk/clerk-expo";
 import {
   widthPercentageToDP as wp,
@@ -17,38 +18,28 @@ import {
 import Colors from "../../constant/Colors";
 
 const LoginScreen = () => {
+  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
   const { startSSOFlow } = useSSO();
 
-  const onPress = useCallback(async () => {
+  const onPress = async () => {
     try {
-      // Start the authentication process by calling `startSSOFlow()`
-      const { createdSessionId, setActive, signIn, signUp } =
-        await startSSOFlow({
-          strategy: "oauth_google",
-          // For web, defaults to current path
-          // For native, you must pass a scheme, like AuthSession.makeRedirectUri({ scheme, path })
-          // For more info, see https://docs.expo.dev/versions/latest/sdk/auth-session/#authsessionmakeredirecturioptions
-          redirectUrl: AuthSession.makeRedirectUri({
-            scheme: "myapp",
-            path: "/(tabs)/home",
-          }),
-        });
+      const { createdSessionId, setActive } = await startOAuthFlow({
+        redirectUrl: AuthSession.makeRedirectUri({
+          scheme: "myapp",
+          path: "/(tabs)/home",
+        }),
+      });
 
-      // If sign in was successful, set the active session
       if (createdSessionId) {
         await setActive({ session: createdSessionId });
       } else {
-        // If there is no `createdSessionId`,
-        // there are missing requirements, such as MFA
-        // Use the `signIn` or `signUp` returned from `startSSOFlow`
-        // to handle next steps
+        console.log("User did not complete the login process.");
       }
     } catch (err) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
-      console.error(JSON.stringify(err, null, 2));
+      console.log("OAuth error", err);
     }
-  }, []);
+  };
+
   return (
     <View edges={["top"]} style={styles.container}>
       <StatusBar style="light" />
