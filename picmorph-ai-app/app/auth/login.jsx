@@ -10,7 +10,8 @@ import React, { useCallback, useEffect } from "react";
 import * as WebBrowser from "expo-web-browser";
 import * as AuthSession from "expo-auth-session";
 import { useOAuth } from "@clerk/clerk-expo";
-import { useSSO } from "@clerk/clerk-expo";
+import { useRouter } from "expo-router";
+
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -18,8 +19,8 @@ import {
 import Colors from "../../constant/Colors";
 
 const LoginScreen = () => {
+  const router = useRouter();
   const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
-  const { startSSOFlow } = useSSO();
 
   const onPress = async () => {
     try {
@@ -32,6 +33,7 @@ const LoginScreen = () => {
 
       if (createdSessionId) {
         await setActive({ session: createdSessionId });
+        router.replace("/home");
       } else {
         console.log("User did not complete the login process.");
       }
